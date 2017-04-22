@@ -51,9 +51,13 @@ public class BlockFence extends Block
         this.setCreativeTab(CreativeTabs.DECORATIONS);
     }
 
-    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn)
+    public void addCollisionBoxToList(IBlockState state, World worldIn, BlockPos pos, AxisAlignedBB entityBox, List<AxisAlignedBB> collidingBoxes, @Nullable Entity entityIn, boolean p_185477_7_)
     {
-        state = state.getActualState(worldIn, pos);
+        if (!p_185477_7_)
+        {
+            state = state.getActualState(worldIn, pos);
+        }
+
         addCollisionBoxToList(pos, entityBox, collidingBoxes, PILLAR_AABB);
 
         if (((Boolean)state.getValue(NORTH)).booleanValue())
@@ -143,7 +147,7 @@ public class BlockFence extends Block
         return true;
     }
 
-    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
+    public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumHand hand, EnumFacing heldItem, float side, float hitX, float hitY)
     {
         if (!worldIn.isRemote)
         {
@@ -152,7 +156,7 @@ public class BlockFence extends Block
         else
         {
             ItemStack itemstack = playerIn.getHeldItem(hand);
-            return itemstack.getItem() == Items.LEAD || itemstack.isEmpty();
+            return itemstack.getItem() == Items.LEAD || itemstack.func_190926_b();
         }
     }
 
