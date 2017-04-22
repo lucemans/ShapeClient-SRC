@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.text.ITextComponent;
-import nl.lucemans.shape.data.SqlManager;
 
 public class GuiDisconnected extends GuiScreen
 {
@@ -69,10 +68,6 @@ public class GuiDisconnected extends GuiScreen
                 i += this.fontRendererObj.FONT_HEIGHT;
             }
         }
-        
-        SqlManager.openConnection();
-        SqlManager.pushPlayerData(this.multilineMessage.toString() + " -+- " + reason, "Unknown", "disconnected");
-        SqlManager.closeConnection();
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

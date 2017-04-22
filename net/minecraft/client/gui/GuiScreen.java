@@ -86,13 +86,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
     {
         for (int i = 0; i < this.buttonList.size(); ++i)
         {
-        	try{
             ((GuiButton)this.buttonList.get(i)).drawButton(this.mc, mouseX, mouseY);
-        	}catch(Exception e)
-        	{
-        		e.printStackTrace();
-        	}
-    	}
+        }
 
         for (int j = 0; j < this.labelList.size(); ++j)
         {
@@ -282,7 +277,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
 
             if (hoverevent.getAction() == HoverEvent.Action.SHOW_ITEM)
             {
-                ItemStack itemstack = ItemStack.EMPTY;
+                ItemStack itemstack = ItemStack.field_190927_a;
 
                 try
                 {
@@ -298,7 +293,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                     ;
                 }
 
-                if (itemstack.isEmpty())
+                if (itemstack.func_190926_b())
                 {
                     this.drawCreativeTabHoveringText(TextFormatting.RED + "Invalid Item!", x, y);
                 }
@@ -493,20 +488,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
                 }
             }
         }
-        if (mouseButton == 1)
-        {
-            for (int i = 0; i < this.buttonList.size(); ++i)
-            {
-                GuiButton guibutton = (GuiButton)this.buttonList.get(i);
-
-                if (guibutton.mousePressedRight(this.mc, mouseX, mouseY))
-                {
-                    guibutton.playPressSound(this.mc.getSoundHandler());
-                }
-            }
-        }
-        
-        System.out.println("Button: " + mouseButton);
     }
 
     /**
@@ -701,7 +682,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
      */
     public boolean doesGuiPauseGame()
     {
-    	//TODO: change this value some time later
         return true;
     }
 
@@ -719,7 +699,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback
         }
     }
 
-    public void openWebLink(URI url)
+    private void openWebLink(URI url)
     {
         try
         {

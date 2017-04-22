@@ -7,7 +7,7 @@ public class GuiButtonLanguage extends GuiButton
 {
     public GuiButtonLanguage(int buttonID, int xPos, int yPos)
     {
-        super(buttonID, xPos, yPos, 20, 20, "Language");
+        super(buttonID, xPos, yPos, 20, 20, "");
     }
 
     /**

@@ -1,15 +1,11 @@
 package net.minecraft.client.gui;
 
-import static org.lwjgl.opengl.GL11.glLineWidth;
-
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.VertexBuffer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.opengl.GL11;
 
 public class Gui
 {
@@ -32,19 +28,6 @@ public class Gui
 
         drawRect(startX, y, endX + 1, y + 1, color);
     }
-    
-    public static void drawCircle(int x, int y, int r, int color)
-    {
-    	for (int i = 0; i < 360; i++)
-    	{
-    		double theta = (2.0f * Math.PI * i / 360f);
-    		
-    		double _x = r * Math.cos(theta);
-    		double _y = r * Math.sin(theta);
-    		
-    		drawRect(x, y, (int) _x + x, (int) _y + y, color);
-    	}
-    }
 
     /**
      * Draw a 1 pixel wide vertical line. Args : x, y1, y2, color
@@ -66,7 +49,7 @@ public class Gui
      */
     public static void drawRect(int left, int top, int right, int bottom, int color)
     {
-    	if (left < right)
+        if (left < right)
         {
             int i = left;
             left = right;
@@ -79,7 +62,7 @@ public class Gui
             top = bottom;
             bottom = j;
         }
-        
+
         float f3 = (float)(color >> 24 & 255) / 255.0F;
         float f = (float)(color >> 16 & 255) / 255.0F;
         float f1 = (float)(color >> 8 & 255) / 255.0F;
@@ -91,60 +74,10 @@ public class Gui
         GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.color(f, f1, f2, f3);
         vertexbuffer.begin(7, DefaultVertexFormats.POSITION);
-        
         vertexbuffer.pos((double)left, (double)bottom, 0.0D).endVertex();
         vertexbuffer.pos((double)right, (double)bottom, 0.0D).endVertex();
         vertexbuffer.pos((double)right, (double)top, 0.0D).endVertex();
         vertexbuffer.pos((double)left, (double)top, 0.0D).endVertex();
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-    }
-    
-    /**
-     * Draws a solid color rectangle with the specified coordinates and color.
-     */
-    public static void drawLine(int left, int top, int right, int bottom, int color, boolean mod)
-    {
-        /*if (left < right)
-        {
-            int i = left;
-            left = right;
-            right = i;
-        }
-
-        if (top < bottom)
-        {
-            int j = top;
-            top = bottom;
-            bottom = j;
-        }*/
-
-        float f3 = (float)(color >> 24 & 255) / 255.0F;
-        float f = (float)(color >> 16 & 255) / 255.0F;
-        float f1 = (float)(color >> 8 & 255) / 255.0F;
-        float f2 = (float)(color & 255) / 255.0F;
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexbuffer = tessellator.getBuffer();
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.color(f, f1, f2, f3);
-        vertexbuffer.begin(7, DefaultVertexFormats.POSITION);
-        if (mod)
-        {
-        	vertexbuffer.pos((double)right, (double)bottom+1, 0.0D).endVertex();
-	        vertexbuffer.pos((double)right, (double)bottom, 0.0D).endVertex();
-	        vertexbuffer.pos((double)left, (double)top, 0.0D).endVertex();
-	        vertexbuffer.pos((double)left, (double)top+1, 0.0D).endVertex();
-        }
-        else
-        {
-        	vertexbuffer.pos((double)left, (double)bottom+1, 0.0D).endVertex();
-	        vertexbuffer.pos((double)left, (double)bottom, 0.0D).endVertex();
-	        vertexbuffer.pos((double)right, (double)top, 0.0D).endVertex();
-	        vertexbuffer.pos((double)right, (double)top+1, 0.0D).endVertex();
-        }
         tessellator.draw();
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -190,17 +123,6 @@ public class Gui
     {
         fontRendererIn.drawStringWithShadow(text, (float)(x - fontRendererIn.getStringWidth(text) / 2), (float)y, color);
     }
-    
-    /**
-     * Renders the specified text to the screen, center-aligned. Args : renderer, string, x, y, color
-     */
-    public void drawCenteredString(FontRenderer fontRendererIn, String text, float x, float y, int color, boolean shadow)
-    {
-    	if (shadow)
-    		fontRendererIn.drawStringWithShadow(text, (float)(x - fontRendererIn.getStringWidth(text) / 2), (float)y, color);
-    	else
-    		fontRendererIn.drawString(text, (float)(x - fontRendererIn.getStringWidth(text) / 2), (float)y, color, false);
-    }
 
     /**
      * Renders the specified text to the screen. Args : renderer, string, x, y, color
@@ -223,20 +145,6 @@ public class Gui
         vertexbuffer.pos((double)(x + 0), (double)(y + height), (double)this.zLevel).tex((double)((float)(textureX + 0) * 0.00390625F), (double)((float)(textureY + height) * 0.00390625F)).endVertex();
         vertexbuffer.pos((double)(x + width), (double)(y + height), (double)this.zLevel).tex((double)((float)(textureX + width) * 0.00390625F), (double)((float)(textureY + height) * 0.00390625F)).endVertex();
         vertexbuffer.pos((double)(x + width), (double)(y + 0), (double)this.zLevel).tex((double)((float)(textureX + width) * 0.00390625F), (double)((float)(textureY + 0) * 0.00390625F)).endVertex();
-        vertexbuffer.pos((double)(x + 0), (double)(y + 0), (double)this.zLevel).tex((double)((float)(textureX + 0) * 0.00390625F), (double)((float)(textureY + 0) * 0.00390625F)).endVertex();
-        tessellator.draw();
-    }
-    
-    public void drawTexturedModalRect(int x, int y, int textureX, int textureY, int width, int height, int scalex, int scaley)
-    {
-        float f = 0.00390625F;
-        float f1 = 0.00390625F;
-        Tessellator tessellator = Tessellator.getInstance();
-        VertexBuffer vertexbuffer = tessellator.getBuffer();
-        vertexbuffer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        vertexbuffer.pos((double)(x + 0), (double)(y + scaley), (double)this.zLevel).tex((double)((float)(textureX + 0) * 0.00390625F), (double)((float)(textureY + height) * 0.00390625F)).endVertex();
-        vertexbuffer.pos((double)(x + scalex), (double)(y + scaley), (double)this.zLevel).tex((double)((float)(textureX + width) * 0.00390625F), (double)((float)(textureY + height) * 0.00390625F)).endVertex();
-        vertexbuffer.pos((double)(x + scalex), (double)(y + 0), (double)this.zLevel).tex((double)((float)(textureX + width) * 0.00390625F), (double)((float)(textureY + 0) * 0.00390625F)).endVertex();
         vertexbuffer.pos((double)(x + 0), (double)(y + 0), (double)this.zLevel).tex((double)((float)(textureX + 0) * 0.00390625F), (double)((float)(textureY + 0) * 0.00390625F)).endVertex();
         tessellator.draw();
     }

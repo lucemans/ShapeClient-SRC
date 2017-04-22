@@ -1,9 +1,7 @@
 package net.minecraft.client.entity;
 
 import java.util.List;
-
 import javax.annotation.Nullable;
-
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ElytraSound;
@@ -77,9 +75,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
-import nl.lucemans.shape.events.EventPostMotionUpdates;
-import nl.lucemans.shape.events.EventPreMotionUpdates;
-import nl.lucemans.shape.events.EventUpdate;
 
 public class EntityPlayerSP extends AbstractClientPlayer
 {
@@ -231,10 +226,6 @@ public class EntityPlayerSP extends AbstractClientPlayer
     {
         if (this.world.isBlockLoaded(new BlockPos(this.posX, 0.0D, this.posZ)))
         {
-        	//TODO: Client Update
-        	EventUpdate eventUpdate = new EventUpdate();
-        	eventUpdate.call();
-        	
             super.onUpdate();
 
             if (this.isRiding())
@@ -250,14 +241,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
             }
             else
             {
-            	EventPreMotionUpdates eventPreMotionUpdates = new EventPreMotionUpdates(this.rotationYaw, this.rotationPitch, this.lastTickPosX, this.lastTickPosY, this.lastTickPosZ);
-            	eventPreMotionUpdates.call();
-            	
                 this.onUpdateWalkingPlayer();
-                
-                //TODO: Client postMotionUpdates
-                EventPostMotionUpdates eventPostMotionUpdates = new EventPostMotionUpdates(this.rotationYaw, this.rotationPitch, this.onGround, this.posY);
-                eventPostMotionUpdates.call();
             }
         }
     }
@@ -367,7 +351,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
     protected ItemStack dropItemAndGetStack(EntityItem p_184816_1_)
     {
-        return ItemStack.EMPTY;
+        return ItemStack.field_190927_a;
     }
 
     /**
@@ -412,7 +396,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
 
     public void closeScreenAndDropStack()
     {
-        this.inventory.setItemStack(ItemStack.EMPTY);
+        this.inventory.setItemStack(ItemStack.field_190927_a);
         super.closeScreen();
         this.mc.displayGuiScreen((GuiScreen)null);
     }
@@ -440,7 +424,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
                 this.lastDamage = f;
                 this.setHealth(this.getHealth());
                 this.hurtResistantTime = this.maxHurtResistantTime;
-                this.damageEntity(DamageSource.GENERIC, f);
+                this.damageEntity(DamageSource.generic, f);
                 this.maxHurtTime = 10;
                 this.hurtTime = this.maxHurtTime;
             }
@@ -526,11 +510,11 @@ public class EntityPlayerSP extends AbstractClientPlayer
         this.permissionLevel = p_184839_1_;
     }
 
-    public void sendStatusMessage(ITextComponent chatComponent, boolean actionBar)
+    public void addChatComponentMessage(ITextComponent chatComponent, boolean p_146105_2_)
     {
-        if (actionBar)
+        if (p_146105_2_)
         {
-            this.mc.ingameGUI.setOverlayMessage(chatComponent, false);
+            this.mc.ingameGUI.setRecordPlaying(chatComponent, false);
         }
         else
         {
@@ -636,7 +620,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
     /**
      * Send a chat message to the CommandSender
      */
-    public void sendMessage(ITextComponent component)
+    public void addChatMessage(ITextComponent component)
     {
         this.mc.ingameGUI.getChatGUI().printChatMessage(component);
     }
@@ -644,7 +628,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
     /**
      * Returns {@code true} if the CommandSender is allowed to execute the command, {@code false} if not
      */
-    public boolean canUseCommand(int permLevel, String commandName)
+    public boolean canCommandSenderUseCommand(int permLevel, String commandName)
     {
         return permLevel <= this.getPermissionLevel();
     }
@@ -687,7 +671,7 @@ public class EntityPlayerSP extends AbstractClientPlayer
     {
         ItemStack itemstack = this.getHeldItem(hand);
 
-        if (!itemstack.isEmpty() && !this.isHandActive())
+        if (!itemstack.func_190926_b() && !this.isHandActive())
         {
             super.setActiveHand(hand);
             this.handActive = true;
@@ -1152,11 +1136,11 @@ public class EntityPlayerSP extends AbstractClientPlayer
     /**
      * Tries to move the entity towards the specified location.
      */
-    public void move(MoverType x, double p_70091_2_, double p_70091_4_, double p_70091_6_)
+    public void moveEntity(MoverType x, double p_70091_2_, double p_70091_4_, double p_70091_6_)
     {
         double d0 = this.posX;
         double d1 = this.posZ;
-        super.move(x, p_70091_2_, p_70091_4_, p_70091_6_);
+        super.moveEntity(x, p_70091_2_, p_70091_4_, p_70091_6_);
         this.updateAutoJump((float)(this.posX - d0), (float)(this.posZ - d1));
     }
 

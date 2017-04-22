@@ -1,15 +1,7 @@
 package net.minecraft.client.gui;
 
 import java.io.IOException;
-import java.util.HashMap;
-
 import javax.annotation.Nullable;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ITabCompleter;
 import net.minecraft.util.TabCompleter;
@@ -18,15 +10,16 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import nl.lucemans.shape.Shape;
-import nl.lucemans.shape.utils.ChatUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 public class GuiChat extends GuiScreen implements ITabCompleter
 {
     private static final Logger LOGGER = LogManager.getLogger();
     private String historyBuffer = "";
-    private HashMap<String, Integer> colors = new HashMap<String, Integer>();
-    
+
     /**
      * keeps position of which chat message you will select when you press up, (does not increase for duplicated
      * messages sent immediately after each other)
@@ -66,23 +59,6 @@ public class GuiChat extends GuiScreen implements ITabCompleter
         this.inputField.setText(this.defaultInputFieldText);
         this.inputField.setCanLoseFocus(false);
         this.tabCompleter = new GuiChat.ChatTabCompleter(this.inputField);
-        colors.clear();
-        colors.put("&4", 0xeeBE0000);
-        colors.put("&c", 0xeeFE3F3F);
-        colors.put("&6", 0xeeD9A334);
-        colors.put("&e", 0xeeFEFE3F);
-        colors.put("&2", 0xee00BE00);
-        colors.put("&a", 0xee3FFE3F);
-        colors.put("&b", 0xee3FFEFE);
-        colors.put("&3", 0xee00BEBE);
-        colors.put("&1", 0xee0000BE);
-        colors.put("&9", 0xee3F3FFE);
-        colors.put("&d", 0xeeFE3FFE);
-        colors.put("&5", 0xeeBE00BE);
-        colors.put("&f", 0xeeFFFFFF);
-        colors.put("&7", 0xeeBEBEBE);
-        colors.put("&8", 0xee828282);
-        colors.put("&0", 0xee000000);
     }
 
     /**
@@ -150,18 +126,9 @@ public class GuiChat extends GuiScreen implements ITabCompleter
         {
             String s = this.inputField.getText().trim();
 
-            if (s.startsWith("."))
+            if (!s.isEmpty())
             {
-            	String _s = s.replace(".", "");
-            	Shape.INSTANCE.ircBot.sendMessage(_s);
-            	ChatUtils.irc(Minecraft.getMinecraft().session.getUsername(), _s);
-            }
-            else
-            {
-	            if (!s.isEmpty())
-	            {
-	                this.sendChatMessage(s);
-	            }
+                this.sendChatMessage(s);
             }
 
             this.mc.displayGuiScreen((GuiScreen)null);
@@ -210,35 +177,6 @@ public class GuiChat extends GuiScreen implements ITabCompleter
             {
                 return;
             }
-        }
-        
-        //TODO: Color Implant
-        Integer hor = 0;
-        Integer vert = 0;
-        for (String str : colors.keySet())
-        {
-        	Integer start = 4;
-        	Integer perRow = 4;
-        	Integer wid = (150-(start*2))/perRow+(1/perRow);
-        	int code = colors.get(str);
-        	Integer _x = width-150 + (hor*(wid))+start;
-        	Integer _y = height-170 + + start + (vert*(wid));
-        	if (mouseX >= _x
-        			&& mouseY >= _y
-        			&& mouseX <= _x+wid
-        			&& mouseY <= _y+wid)
-        	{
-        		//this.inputField.text = this.inputField.text.substring(this.inputField.cursorPosition) + str + this.inputField.text.substring(this.inputField.cursorPosition, this.inputField.text.length());
-        		//this.inputField.cursorPosition += str.length();
-        		this.inputField.writeText(str);
-        	}
-        	
-        	hor += 1;
-        	if (hor >= perRow)
-        	{
-        		hor -= perRow;
-        		vert += 1;
-        	}
         }
 
         this.inputField.mouseClicked(mouseX, mouseY, mouseButton);
@@ -303,29 +241,7 @@ public class GuiChat extends GuiScreen implements ITabCompleter
         {
             this.handleComponentHover(itextcomponent, mouseX, mouseY);
         }
-        
-        //TODO: Shape Color Chat
-        drawRect(width-150, height-170, width, height, 0x33ffffff);
-        Integer hor = 0;
-        Integer vert = 0;
-        for (String str : colors.keySet())
-        {
-        	Integer start = 4;
-        	Integer perRow = 4;
-        	Integer wid = (150-(start*2))/perRow+(1/perRow);
-        	int code = colors.get(str);
-        	Integer _x = width-150 + (hor*(wid))+start;
-        	Integer _y = height-170 + + start + (vert*(wid));
-        	drawRect(_x+wid/16, _y+wid/16, _x+wid-wid/16, _y+wid-wid/16, code);
-        	
-        	hor += 1;
-        	if (hor >= perRow)
-        	{
-        		hor -= perRow;
-        		vert += 1;
-        	}
-        }
-        
+
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 

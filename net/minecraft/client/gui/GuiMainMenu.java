@@ -1,13 +1,9 @@
 package net.minecraft.client.gui;
 
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.glColor4f;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-
+import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import java.io.BufferedReader;
 import java.io.Closeable;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
@@ -15,19 +11,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-
-import org.apache.commons.io.Charsets;
-import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GLContext;
-import org.lwjgl.util.glu.Project;
-
-import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -49,15 +32,12 @@ import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.demo.DemoWorldServer;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.WorldInfo;
-import nl.lucemans.shape.Shape;
-import nl.lucemans.shape.file.Updater;
-import nl.lucemans.shape.gui.FriendsGui;
-import nl.lucemans.shape.gui.ShapeGuiAdmin;
-import nl.lucemans.shape.gui.ShapeGuiAltManager;
-import nl.lucemans.shape.gui.ShapeGuiShop;
-import nl.lucemans.shape.gui.ShapeGuiTermsAndAgreements;
-import nl.lucemans.shape.gui.ShapeGuiThemeSelector;
-import nl.lucemans.shape.irc.IrcBot;
+import org.apache.commons.io.Charsets;
+import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.GLContext;
+import org.lwjgl.util.glu.Project;
 
 public class GuiMainMenu extends GuiScreen
 {
@@ -132,9 +112,6 @@ public class GuiMainMenu extends GuiScreen
     private GuiButton modButton;
     private GuiScreen modUpdateNotification;
 
-    //TODO: INIT VARIABLED
-    private String shapeinput = " > ";
-    
     public GuiMainMenu()
     {
         this.openGLWarning2 = MORE_INFO_TEXT;
@@ -235,34 +212,6 @@ public class GuiMainMenu extends GuiScreen
      */
     protected void keyTyped(char typedChar, int keyCode) throws IOException
     {
-    	//TODO: STORES NOTE
-    	if (Character.isLetterOrDigit(typedChar))
-    	{
-    		this.shapeinput += typedChar; //Keyboard.getKeyName(keyCode);
-    	}
-    	else
-    	{
-    		// not alphanumerical
-    		if (Keyboard.getKeyName(keyCode).equalsIgnoreCase("SPACE"))
-    		{
-    			this.shapeinput += " ";
-    		}
-    		else if (Keyboard.getKeyName(keyCode).equalsIgnoreCase("BACK"))
-    		{
-    			if (this.shapeinput.length() > 3)
-    			{
-    				this.shapeinput = this.shapeinput.substring(0, this.shapeinput.length()-1);
-    			}
-    		}
-    		else if (Keyboard.getKeyName(keyCode).equalsIgnoreCase("RETURN"))
-    		{
-    			this.shapeinput += "\n";
-    		}
-    		else
-    		{
-    			//this.shapeinput += "?"; //Keyboard.getKeyName(keyCode);
-    		}
-    	}
     }
 
     /**
@@ -271,9 +220,6 @@ public class GuiMainMenu extends GuiScreen
      */
     public void initGui()
     {
-		if (!Shape.INSTANCE.props.isTermsAgreed())
-			mc.displayGuiScreen(new ShapeGuiTermsAndAgreements(this)); System.out.println("User has not agreed to our Terms");
-    	
         this.viewportTexture = new DynamicTexture(256, 256);
         this.backgroundTexture = this.mc.getTextureManager().getDynamicTextureLocation("background", this.viewportTexture);
         Calendar calendar = Calendar.getInstance();
@@ -291,10 +237,6 @@ public class GuiMainMenu extends GuiScreen
         {
             this.splashText = "OOoooOOOoooo! Spooky!";
         }
-        else
-        {
-        	this.splashText = Shape.resolveSplash(this.splashText, calendar);
-        }
 
         int i = 24;
         int j = this.height / 4 + 48;
@@ -308,18 +250,9 @@ public class GuiMainMenu extends GuiScreen
             this.addSingleplayerMultiplayerButtons(j, 24);
         }
 
-        //this.buttonList.add(new GuiButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options", new Object[0])));
-        //this.buttonList.add(new GuiButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit", new Object[0])));
-        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, j + 72 + 12, 200/5-3, 20, "Options")); // language = 5
-        this.buttonList.add(new GuiButton(21, this.width / 2 - 100 + 200/5 + 1, j + 72 + 12, 200/5-3, 20, "Web"));
-        this.buttonList.add(new GuiButton(20, this.width / 2 - 100 + 200/5 + 200/5 + 2, j + 72 + 12, 200/5-3, 20, "Stats"));
-        this.buttonList.add(new GuiButton(23, this.width / 2 - 100 + 200/5 + 200/5 + 200/5 + 3, j + 72 + 12, 200/5-3, 20, "Update"));
-        this.buttonList.add(new GuiButton(4, this.width / 2 - 100 + 200/5 + 200/5 + 200/5 + 200/5 + 4, j + 72 + 12, 200/5-3, 20, "Exit"));
-        this.buttonList.add(new GuiButton(24, 0,0,"Themes"));
-        this.buttonList.add(new GuiButton(25, 0, 20, "Admin"));
-        this.buttonList.add(new GuiButton(26, 0, 40, "Shop"));
-        //TODO: 
-        //this.buttonList.add(new GuiButtonWebsite(20, this.width / 2 - 100 + 20 + 4, j + 72 + 12 + 24));
+        this.buttonList.add(new GuiButton(0, this.width / 2 - 100, j + 72 + 12, 98, 20, I18n.format("menu.options", new Object[0])));
+        this.buttonList.add(new GuiButton(4, this.width / 2 + 2, j + 72 + 12, 98, 20, I18n.format("menu.quit", new Object[0])));
+        this.buttonList.add(new GuiButtonLanguage(5, this.width / 2 - 124, j + 72 + 12));
 
         synchronized (this.threadLock)
         {
@@ -368,8 +301,7 @@ public class GuiMainMenu extends GuiScreen
         }
         else
         {
-            this.realmsButton = this.addButton(new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, 96, 20, I18n.format("menu.online", new Object[0])));
-            this.buttonList.add(new GuiButton(22, this.width / 2 + 100 - 96, p_73969_1_ + p_73969_2_ * 2, 96, 20, "Alt Manager"));
+            this.realmsButton = this.addButton(new GuiButton(14, this.width / 2 - 100, p_73969_1_ + p_73969_2_ * 2, I18n.format("menu.online", new Object[0])));
         }
     }
 
@@ -443,44 +375,6 @@ public class GuiMainMenu extends GuiScreen
             {
                 this.mc.displayGuiScreen(new GuiYesNo(this, I18n.format("selectWorld.deleteQuestion", new Object[0]), "\'" + worldinfo.getWorldName() + "\' " + I18n.format("selectWorld.deleteWarning", new Object[0]), I18n.format("selectWorld.deleteButton", new Object[0]), I18n.format("gui.cancel", new Object[0]), 12));
             }
-        }
-        //TODO: Client Buttons
-        if (button.id == 20)
-        {
-            this.mc.displayGuiScreen(new FriendsGui(this));
-        	//
-        	//Shape.INSTANCE.ircBot.openConnection("#shapeclientmain");
-        }
-        if (button.id == 21)
-        {
-        	//TODO: MAKE OPEN WEBPAGE SYSTEM
-        	System.out.println("OPEN A WEBPAGE");
-        	try {
-        	this.openWebLink(new URI("http://lucemans.nl"));
-        	}catch(Exception e)
-        	{
-        		e.printStackTrace();
-        	}
-        }
-        if (button.id == 22)
-        {
-        	this.mc.displayGuiScreen(new ShapeGuiAltManager(this));
-        }
-        if (button.id == 23)
-        {
-        	Updater.CheckForUpdates();
-        }
-        if (button.id == 24)
-        {
-        	this.mc.displayGuiScreen(new ShapeGuiThemeSelector());
-        }
-        if (button.id == 25)
-        {
-        	this.mc.displayGuiScreen(new ShapeGuiAdmin(this));
-        }
-        if (button.id == 26)
-        {
-        	this.mc.displayGuiScreen(new ShapeGuiShop());
         }
     }
 
@@ -637,8 +531,7 @@ public class GuiMainMenu extends GuiScreen
         GlStateManager.glTexParameteri(3553, 10240, 9729);
         GlStateManager.glCopyTexSubImage2D(3553, 0, 0, 0, 0, 0, 256, 256);
         GlStateManager.enableBlend();
-        //TODO: Error Commented Out
-        //GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
         GlStateManager.colorMask(true, true, true, false);
         Tessellator tessellator = Tessellator.getInstance();
         VertexBuffer vertexbuffer = tessellator.getBuffer();
@@ -715,53 +608,8 @@ public class GuiMainMenu extends GuiScreen
      */
     public void drawScreen(int mouseX, int mouseY, float partialTicks)
     {
-    	for(GuiButton button : buttonList)
-    	{
-    		button.visible = Shape.INSTANCE.themeManager.getTheme().showButtons;
-    		if (button.id >= 24 && button.id <= 26)
-    			button.visible = true;
-    	}
-    	
-    	if (Shape.INSTANCE.themeManager.getTheme().backgroundImage == null)
-    	{
-    		drawGradientRect(0, 0, width, height, Shape.INSTANCE.themeManager.getTheme().backgroundGradTop, Shape.INSTANCE.themeManager.getTheme().backgroundGradDown);
-    	}
-    	else
-    	{
-    		if (Shape.INSTANCE.XPbg != null)
-    		{
-    			Minecraft.getMinecraft().getTextureManager()
-    			.bindTexture(Shape.INSTANCE.XPbg);
-            	glEnable(GL_BLEND);
-            	glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            	
-            	Integer h = (int) Math.round(((float)height/25.2142857143));
-            	
-            	drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 1920, 1200, width, height);
-            	
-            	//System.out.println("HEIGHT: " + height);
-            	
-            	glDisable(GL_BLEND);
-    		}
-    		else
-    		{
-    			// draw background if thing not loads
-        		drawGradientRect(0, 0, width, height, Shape.INSTANCE.themeManager.getTheme().backgroundGradTop, Shape.INSTANCE.themeManager.getTheme().backgroundGradDown);
-    		}
-    	}
-    	
-    	GL11.glPushMatrix();
-    	
-    	GL11.glScalef(5f, 5f, 1f);
-    	
-    	drawCenteredString(mc.fontRendererObj, Shape.INSTANCE.settings.menuTitle, width/5/2, 10, 0xffffffff); //53
-    	//drawCenteredString(new FontRenderer(mc.gameSettings, new ResourceLocation("textures/font/asciij.png"), mc.getTextureManager(), false), Shape.INSTANCE.settings.menuTitle, width/5/2, 10, 0xffffffff);
-    	
-    	GL11.glPopMatrix();
-    	
-    	//
         GlStateManager.disableAlpha();
-        //this.renderSkybox(mouseX, mouseY, partialTicks);
+        this.renderSkybox(mouseX, mouseY, partialTicks);
         GlStateManager.enableAlpha();
         int i = 274;
         int j = this.width / 2 - 137;
@@ -770,8 +618,7 @@ public class GuiMainMenu extends GuiScreen
         int i1 = 16777215;
         int j1 = 0;
         int k1 = Integer.MIN_VALUE;
-        /*
-        CustomPanoramaProperties custompanoramaproperties = CustomPanorama.getCustomPanoramaProperties();W
+        CustomPanoramaProperties custompanoramaproperties = CustomPanorama.getCustomPanoramaProperties();
 
         if (custompanoramaproperties != null)
         {
@@ -790,11 +637,10 @@ public class GuiMainMenu extends GuiScreen
         {
             this.drawGradientRect(0, 0, this.width, this.height, j1, k1);
         }
-        */
-		//
+
         this.mc.getTextureManager().bindTexture(MINECRAFT_TITLE_TEXTURES);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        /* MINECRAFT title
+
         if ((double)this.updateCounter < 1.0E-4D)
         {
             this.drawTexturedModalRect(j + 0, 30, 0, 0, 99, 44);
@@ -808,7 +654,6 @@ public class GuiMainMenu extends GuiScreen
             this.drawTexturedModalRect(j + 0, 30, 0, 0, 155, 44);
             this.drawTexturedModalRect(j + 155, 30, 0, 45, 155, 44);
         }
-        */
 
         if (Reflector.ForgeHooksClient_renderMainMenu.exists())
         {
@@ -816,14 +661,14 @@ public class GuiMainMenu extends GuiScreen
         }
 
         GlStateManager.pushMatrix();
-        //GlStateManager.translate((float)(this.width / 2 + 90), 70.0F, 0.0F);
-        //GlStateManager.rotate(0.0F, 0.0F, 0.0F, 1.0F);
+        GlStateManager.translate((float)(this.width / 2 + 90), 70.0F, 0.0F);
+        GlStateManager.rotate(-20.0F, 0.0F, 0.0F, 1.0F);
         float f = 1.8F - MathHelper.abs(MathHelper.sin((float)(Minecraft.getSystemTime() % 1000L) / 1000.0F * ((float)Math.PI * 2F)) * 0.1F);
         f = f * 100.0F / (float)(this.fontRendererObj.getStringWidth(this.splashText) + 32);
-        GlStateManager.scale(1F, 1F, f);
-        this.drawCenteredString(this.fontRendererObj, this.splashText, width/2, this.height / 4 + 32, -256);
+        GlStateManager.scale(f, f, f);
+        this.drawCenteredString(this.fontRendererObj, this.splashText, 0, -8, -256);
         GlStateManager.popMatrix();
-        String s = "Minecraft 1.11";
+        String s = "Minecraft 1.11.2";
 
         if (this.mc.isDemo())
         {
@@ -833,9 +678,6 @@ public class GuiMainMenu extends GuiScreen
         {
             s = s + ("release".equalsIgnoreCase(this.mc.getVersionType()) ? "" : "/" + this.mc.getVersionType());
         }
-        
-        //TODO: Client MainMessage
-        s = Shape.parseVersion(s);
 
         if (Reflector.FMLCommonHandler_getBrandings.exists())
         {
@@ -858,12 +700,8 @@ public class GuiMainMenu extends GuiScreen
         }
 
         String s2 = "Copyright Mojang AB. Do not distribute!";
-        s2 = Shape.parseCopy(s2);
-        this.drawString(this.fontRendererObj, s2, this.width - this.fontRendererObj.getStringWidth(s2) - 2, this.height - 10, -1);
+        this.drawString(this.fontRendererObj, "Copyright Mojang AB. Do not distribute!", this.width - this.fontRendererObj.getStringWidth("Copyright Mojang AB. Do not distribute!") - 2, this.height - 10, -1);
 
-        //TODO: CLIENT INPUT INVOKE
-        this.drawString(this.fontRendererObj, this.shapeinput, this.width/2 - this.fontRendererObj.getStringWidth(this.shapeinput)/2, this.height - 10, -1);
-        
         if (this.openGLWarning1 != null && !this.openGLWarning1.isEmpty())
         {
             drawRect(this.openGLWarningX1 - 2, this.openGLWarningY1 - 2, this.openGLWarningX2 + 2, this.openGLWarningY2 - 1, 1428160512);
@@ -881,54 +719,6 @@ public class GuiMainMenu extends GuiScreen
         if (this.modUpdateNotification != null)
         {
             this.modUpdateNotification.drawScreen(mouseX, mouseY, partialTicks);
-        }
-        
-        if (Shape.INSTANCE.NEtb != null && Shape.INSTANCE.themeManager.getTheme().windows98Taskbar)
-        {
-			Minecraft.getMinecraft().getTextureManager()
-			.bindTexture(Shape.INSTANCE.NEtb);
-        	glEnable(GL_BLEND);
-        	glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        	
-        	Integer h = 14;
-        	
-        	drawScaledCustomSizeModalRect(0, height-h, 0, 805, 208, 28, 208/2, 14, 1433, 805+28);
-        	drawScaledCustomSizeModalRect(width-211/2, height-h, 1222, 805, 211, 28, 211/2, 14, 1433, 805+28);
-        	
-        	Integer ik = 104;
-        	while (ik < width-211/2)
-        	{
-        		drawScaledCustomSizeModalRect(ik, height-h, 805, 805, 1, 28, 1, 14, 1433, 805+28);
-        		ik += 1;
-        	}
-        	
-        	//System.out.println("HEIGHT: " + height);
-        	
-        	glDisable(GL_BLEND);
-        }
-        
-        if (Shape.INSTANCE.XPtb != null && Shape.INSTANCE.themeManager.getTheme().windowsXPTaskbar)
-        {
-			Minecraft.getMinecraft().getTextureManager()
-			.bindTexture(Shape.INSTANCE.XPtb);
-        	glEnable(GL_BLEND);
-        	glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        	
-        	Integer h = 14;
-        	
-        	drawScaledCustomSizeModalRect(0, height-h, 0, 805, 208, 28, 208/2, 14, 1433, 805+28);
-        	drawScaledCustomSizeModalRect(width-211/2, height-h, 1222, 805, 211, 28, 211/2, 14, 1433, 805+28);
-        	
-        	Integer ik = 104;
-        	while (ik < width-211/2)
-        	{
-        		drawScaledCustomSizeModalRect(ik, height-h, 805, 805, 1, 28, 1, 14, 1433, 805+28);
-        		ik += 1;
-        	}
-        	
-        	//System.out.println("HEIGHT: " + height);
-        	
-        	glDisable(GL_BLEND);
         }
     }
 

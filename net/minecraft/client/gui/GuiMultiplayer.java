@@ -3,7 +3,6 @@ package net.minecraft.client.gui;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.ServerData;
@@ -12,10 +11,6 @@ import net.minecraft.client.network.LanServerDetector;
 import net.minecraft.client.network.LanServerInfo;
 import net.minecraft.client.network.ServerPinger;
 import net.minecraft.client.resources.I18n;
-import nl.lucemans.shape.Shape;
-import nl.lucemans.shape.ShapeServerData;
-import nl.lucemans.shape.gui.ShapeGuiAltManager;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.input.Keyboard;
@@ -53,7 +48,7 @@ public class GuiMultiplayer extends GuiScreen
      * Adds the buttons (and other controls) to the screen in question. Called when the GUI is displayed and when the
      * window resizes, the buttonList is cleared beforehand.
      */
-    public void initGui() 
+    public void initGui()
     {
         Keyboard.enableRepeatEvents(true);
         this.buttonList.clear();
@@ -67,60 +62,6 @@ public class GuiMultiplayer extends GuiScreen
             this.initialized = true;
             this.savedServerList = new ServerList(this.mc);
             this.savedServerList.loadServerList();
-            
-            //TODO: Client Sponsored Servers
-            
-            ArrayList<ServerData> prevServList = new ArrayList<ServerData>();
-            
-            Integer i = 0;
-            Integer b = this.savedServerList.countServers()-1;
-            while (i <= b)
-            {
-            	System.out.println("STORING " + i + " from 0 to prevServList (" + this.savedServerList.getServerData(0).serverName);
-            	prevServList.add(this.savedServerList.getServerData(0));
-            	this.savedServerList.removeServerData(0);
-            	i ++;
-            }
-            System.out.println("ENDED PREVLIST with " + i);
-            
-            for (ShapeServerData data : Shape.getSponsoredServers())
-            {
-            	ServerData _data = new ServerData(data.name, data.ip, false);
-            	this.savedServerList.addServerData(_data);
-            	System.out.println("Added one of our servers");
-            }
-            
-            for (ServerData oldData : prevServList)
-            {
-            	boolean skip = false;
-                for (ShapeServerData data : Shape.getSponsoredServers())
-                {
-                	if (oldData.serverName.equalsIgnoreCase(data.name) || oldData.serverIP.equalsIgnoreCase(data.ip))
-                	{
-                		skip = true;
-                	}
-                }
-            	if (!skip)
-            	{
-	                System.out.println("RESTORING " + i + " from prevServList to ServList (" + oldData.serverName);
-	                this.savedServerList.addServerData(oldData);
-            	}
-            }
-            
-            //Integer i = 0;
-            //for (ShapeServerData data : Shape.getSponsoredServers())
-            //ServerData data = new ServerData("[SPONSOR] DarkNetwork", "DarkNetwork.serv.nu", false);
-            //ServerData placeholder = this.savedServerList.getServerData(0);
-            //
-            //if (!placeholder.serverIP.equalsIgnoreCase("DarkNetwork.serv.nu") || !placeholder.serverName.equalsIgnoreCase("[SPONSOR] DarkNetwork"))
-            //{
-	        //    this.savedServerList.addServerData(placeholder);
-	        //    
-	        //    this.savedServerList.set(0, data);
-            //}
-            
-            savedServerList.saveServerList();
-            
             this.lanServerList = new LanServerDetector.LanServerList();
 
             try
@@ -158,13 +99,6 @@ public class GuiMultiplayer extends GuiScreen
         this.buttonList.add(new GuiButton(3, this.width / 2 + 4 + 50, this.height - 52, 100, 20, I18n.format("selectServer.add", new Object[0])));
         this.buttonList.add(new GuiButton(8, this.width / 2 + 4, this.height - 28, 70, 20, I18n.format("selectServer.refresh", new Object[0])));
         this.buttonList.add(new GuiButton(0, this.width / 2 + 4 + 76, this.height - 28, 75, 20, I18n.format("gui.cancel", new Object[0])));
-        if (Shape.INSTANCE.protNumber == 315)
-        	this.buttonList.add(new GuiButton(10, this.width - this.width/8 - 50, 5, 100, 20, "Protocol 1.11.(1)"));
-        if (Shape.INSTANCE.protNumber == 316)
-        	this.buttonList.add(new GuiButton(10, this.width - this.width/8 - 50, 5, 100, 20, "Protocol 1.11.2"));
-        if (Shape.INSTANCE.protNumber == 47)
-        	this.buttonList.add(new GuiButton(10, this.width - this.width/8 - 50, 5, 100, 20, "Protocol 1.8 (Bugs)"));
-        this.buttonList.add(new GuiButton(11, this.width - this.width/8 - 50-100-5, 5, 100, 20, "Alts ("+Shape.INSTANCE.altList.size()+")"));
         this.selectServer(this.serverListSelector.getSelected());
     }
 
@@ -206,29 +140,6 @@ public class GuiMultiplayer extends GuiScreen
      */
     protected void actionPerformed(GuiButton button) throws IOException
     {
-        if (button.id == 10)
-        {
-        	if (Shape.INSTANCE.protNumber == 316)
-        	{
-        		Shape.INSTANCE.protNumber = 47;
-        	}
-        	else if (Shape.INSTANCE.protNumber == 47)
-        	{
-        		Shape.INSTANCE.protNumber = 315;
-        	}
-        	else if (Shape.INSTANCE.protNumber == 315)
-    		{
-        		Shape.INSTANCE.protNumber = 316;
-    		}
-            if (Shape.INSTANCE.protNumber == 315)
-            	button.displayString = "Protocol 1.11.(1)";
-            if (Shape.INSTANCE.protNumber == 316)
-            	button.displayString = "Protocol 1.11.2";
-            if (Shape.INSTANCE.protNumber == 47)
-            	button.displayString = "Protocol 1.8 (Bugs)";
-        }
-        if (button.id == 11)
-        	this.mc.displayGuiScreen(new ShapeGuiAltManager(this));
         if (button.enabled)
         {
             GuiListExtended.IGuiListEntry guilistextended$iguilistentry = this.serverListSelector.getSelected() < 0 ? null : this.serverListSelector.getListEntry(this.serverListSelector.getSelected());
@@ -579,8 +490,4 @@ public class GuiMultiplayer extends GuiScreen
 
         this.serverListSelector.updateOnlineServers(this.savedServerList);
     }
-
-	public static int getProtocolNumber() {
-		return Shape.INSTANCE.protNumber;
-	}
 }

@@ -50,7 +50,7 @@ public class GuiEnchantment extends GuiContainer
     public float flipA;
     public float open;
     public float oOpen;
-    private ItemStack last = ItemStack.EMPTY;
+    private ItemStack last = ItemStack.field_190927_a;
     private final IWorldNameable nameable;
 
     public GuiEnchantment(InventoryPlayer inventory, World worldIn, IWorldNameable nameable)
@@ -241,16 +241,7 @@ public class GuiEnchantment extends GuiContainer
             Enchantment enchantment = Enchantment.getEnchantmentByID(this.container.enchantClue[j]);
             int l = this.container.worldClue[j];
             int i1 = j + 1;
-            
-            try{
-            //System.out.println("L: " + i + " K: " + k);
-            //if (enchantment != null)
-            	//if (enchantment.getName() != null)
-            		//System.out.println(enchantment.getName());
-            }catch(Exception e)
-            {
-            	e.printStackTrace();
-            }
+
             if (this.isPointInRegion(60, 14 + 19 * j, 108, 17, mouseX, mouseY) && k > 0 && l >= 0 && enchantment != null)
             {
                 List<String> list = Lists.<String>newArrayList();

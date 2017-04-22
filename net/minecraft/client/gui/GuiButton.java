@@ -6,8 +6,6 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.util.ResourceLocation;
-import nl.lucemans.shape.Shape;
-import nl.lucemans.shape.settings.Settings;
 
 public class GuiButton extends Gui
 {
@@ -90,26 +88,8 @@ public class GuiButton extends Gui
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
             GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-            //TODO: Client Style
-            if (this.enabled)
-            {
-            	if (!this.isMouseOver()) // SOMEHOW THIS WORKS
-            	{
-            		// if not hover an enable
-            		drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + height, Shape.INSTANCE.themeManager.getTheme().buttonEnabledColor);
-            	}
-            	else
-            	{
-            		// if mouse over and enabled
-            		drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + height, Shape.INSTANCE.themeManager.getTheme().buttonHoverColor);
-            	}
-            }
-            else
-            {
-            	drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + height, Shape.INSTANCE.themeManager.getTheme().buttonDisabledColor);
-            }
-            //this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
-            //this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
+            this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
+            this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
             this.mouseDragged(mc, mouseX, mouseY);
             int j = 14737632;
 
@@ -149,10 +129,6 @@ public class GuiButton extends Gui
         return this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
     }
 
-	public boolean mousePressedRight(Minecraft mc, int mouseX, int mouseY) {
-        return this.enabled && this.visible && mouseX >= this.xPosition && mouseY >= this.yPosition && mouseX < this.xPosition + this.width && mouseY < this.yPosition + this.height;
-	}
-
     /**
      * Whether the mouse cursor is currently over the button.
      */
@@ -178,20 +154,5 @@ public class GuiButton extends Gui
     public void setWidth(int width)
     {
         this.width = width;
-    }
-    
-    public void setHeight(int height)
-    {
-    	this.height = height;
-    }
-    
-    public void setX(int x)
-    {
-    	this.xPosition = x;
-    }
-    
-    public void setY(int y)
-    {
-    	this.yPosition = y;
     }
 }
