@@ -20,9 +20,9 @@ public class PlayerConfigurationParser
     public static final String ITEM_TYPE = "type";
     public static final String ITEM_ACTIVE = "active";
 
-    public PlayerConfigurationParser(String p_i60_1_)
+    public PlayerConfigurationParser(String p_i67_1_)
     {
-        this.player = p_i60_1_;
+        this.player = p_i67_1_;
     }
 
     public PlayerConfiguration parsePlayerConfiguration(JsonElement p_parsePlayerConfiguration_1_)
@@ -124,7 +124,6 @@ public class PlayerConfigurationParser
             String s1 = new String(abyte, "ASCII");
             JsonParser jsonparser = new JsonParser();
             JsonObject jsonobject = (JsonObject)jsonparser.parse(s1);
-            PlayerItemParser playeritemparser = new PlayerItemParser();
             PlayerItemModel playeritemmodel = PlayerItemParser.parseItemModel(jsonobject);
             return playeritemmodel;
         }

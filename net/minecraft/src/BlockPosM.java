@@ -78,7 +78,7 @@ public class BlockPosM extends BlockPos
     {
         if (this.level <= 0)
         {
-            return super.offset(facing, 1);
+            return super.offset(facing, 1).toImmutable();
         }
         else
         {
@@ -113,7 +113,7 @@ public class BlockPosM extends BlockPos
      */
     public BlockPos offset(EnumFacing facing, int n)
     {
-        return n == 1 ? this.offset(facing) : super.offset(facing, n);
+        return n == 1 ? this.offset(facing) : super.offset(facing, n).toImmutable();
     }
 
     private void update()

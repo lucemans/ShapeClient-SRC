@@ -43,17 +43,21 @@ public class CustomItems
     private static Map mapPotionIds = null;
     private static ItemModelGenerator itemModelGenerator = new ItemModelGenerator();
     private static boolean useGlint = true;
+    private static boolean renderOffHand = false;
     public static final int MASK_POTION_SPLASH = 16384;
     public static final int MASK_POTION_NAME = 63;
+    public static final int MASK_POTION_EXTENDED = 64;
     public static final String KEY_TEXTURE_OVERLAY = "texture.potion_overlay";
     public static final String KEY_TEXTURE_SPLASH = "texture.potion_bottle_splash";
     public static final String KEY_TEXTURE_DRINKABLE = "texture.potion_bottle_drinkable";
     public static final String DEFAULT_TEXTURE_OVERLAY = "items/potion_overlay";
     public static final String DEFAULT_TEXTURE_SPLASH = "items/potion_bottle_splash";
     public static final String DEFAULT_TEXTURE_DRINKABLE = "items/potion_bottle_drinkable";
-    private static final int[] EMPTY_INT_ARRAY = new int[0];
     private static final int[][] EMPTY_INT2_ARRAY = new int[0][];
     private static final Map<String, Integer> mapPotionDamages = makeMapPotionDamages();
+    private static final String TYPE_POTION_NORMAL = "normal";
+    private static final String TYPE_POTION_SPLASH = "splash";
+    private static final String TYPE_POTION_LINGER = "linger";
 
     public static void updateIcons(TextureMap p_updateIcons_0_)
     {
@@ -244,15 +248,16 @@ public class CustomItems
     private static Map makeAutoImageProperties(IResourcePack p_makeAutoImageProperties_0_)
     {
         Map map = new HashMap();
-        map.putAll(makePotionImageProperties(p_makeAutoImageProperties_0_, false));
-        map.putAll(makePotionImageProperties(p_makeAutoImageProperties_0_, true));
+        map.putAll(makePotionImageProperties(p_makeAutoImageProperties_0_, "normal", Item.getIdFromItem(Items.POTIONITEM)));
+        map.putAll(makePotionImageProperties(p_makeAutoImageProperties_0_, "splash", Item.getIdFromItem(Items.SPLASH_POTION)));
+        map.putAll(makePotionImageProperties(p_makeAutoImageProperties_0_, "linger", Item.getIdFromItem(Items.LINGERING_POTION)));
         return map;
     }
 
-    private static Map makePotionImageProperties(IResourcePack p_makePotionImageProperties_0_, boolean p_makePotionImageProperties_1_)
+    private static Map makePotionImageProperties(IResourcePack p_makePotionImageProperties_0_, String p_makePotionImageProperties_1_, int p_makePotionImageProperties_2_)
     {
         Map map = new HashMap();
-        String s = p_makePotionImageProperties_1_ ? "splash/" : "normal/";
+        String s = p_makePotionImageProperties_1_ + "/";
         String[] astring = new String[] {"mcpatcher/cit/potion/" + s, "mcpatcher/cit/Potion/" + s};
         String[] astring1 = new String[] {".png"};
         String[] astring2 = ResUtils.collectFiles(p_makePotionImageProperties_0_, astring, astring1);
@@ -261,7 +266,7 @@ public class CustomItems
         {
             String s1 = astring2[i];
             String name = StrUtils.removePrefixSuffix(s1, astring, astring1);
-            Properties properties = makePotionProperties(name, p_makePotionImageProperties_1_, s1);
+            Properties properties = makePotionProperties(name, p_makePotionImageProperties_1_, p_makePotionImageProperties_2_, s1);
 
             if (properties != null)
             {
@@ -274,59 +279,64 @@ public class CustomItems
         return map;
     }
 
-    private static Properties makePotionProperties(String p_makePotionProperties_0_, boolean p_makePotionProperties_1_, String p_makePotionProperties_2_)
+    private static Properties makePotionProperties(String p_makePotionProperties_0_, String p_makePotionProperties_1_, int p_makePotionProperties_2_, String p_makePotionProperties_3_)
     {
         if (StrUtils.endsWith(p_makePotionProperties_0_, new String[] {"_n", "_s"}))
         {
             return null;
         }
-        else if (p_makePotionProperties_0_.equals("empty") && !p_makePotionProperties_1_)
+        else if (p_makePotionProperties_0_.equals("empty") && p_makePotionProperties_1_.equals("normal"))
         {
-            int l = Item.getIdFromItem(Items.GLASS_BOTTLE);
+            p_makePotionProperties_2_ = Item.getIdFromItem(Items.GLASS_BOTTLE);
             Properties properties = new Properties();
             properties.put("type", "item");
-            properties.put("items", "" + l);
+            properties.put("items", "" + p_makePotionProperties_2_);
             return properties;
         }
         else
         {
-            int i = Item.getIdFromItem(Items.POTIONITEM);
             int[] aint = (int[])((int[])getMapPotionIds().get(p_makePotionProperties_0_));
 
             if (aint == null)
             {
-                Config.warn("Potion not found for image: " + p_makePotionProperties_2_);
+                Config.warn("Potion not found for image: " + p_makePotionProperties_3_);
                 return null;
             }
             else
             {
                 StringBuffer stringbuffer = new StringBuffer();
 
-                for (int j = 0; j < aint.length; ++j)
+                for (int i = 0; i < aint.length; ++i)
                 {
-                    int k = aint[j];
+                    int j = aint[i];
 
-                    if (p_makePotionProperties_1_)
+                    if (p_makePotionProperties_1_.equals("splash"))
                     {
-                        k |= 16384;
+                        j |= 16384;
                     }
 
-                    if (j > 0)
+                    if (i > 0)
                     {
                         stringbuffer.append(" ");
                     }
 
-                    stringbuffer.append(k);
+                    stringbuffer.append(j);
                 }
 
-                int i1 = 16447;
+                int k = 16447;
+
+                if (p_makePotionProperties_0_.equals("water") || p_makePotionProperties_0_.equals("mundane"))
+                {
+                    k |= 64;
+                }
+
                 Properties properties1 = new Properties();
                 properties1.put("type", "item");
-                properties1.put("items", "" + i);
+                properties1.put("items", "" + p_makePotionProperties_2_);
                 properties1.put("damage", "" + stringbuffer.toString());
-                properties1.put("damageMask", "" + i1);
+                properties1.put("damageMask", "" + k);
 
-                if (p_makePotionProperties_1_)
+                if (p_makePotionProperties_1_.equals("splash"))
                 {
                     properties1.put("texture.potion_bottle_splash", p_makePotionProperties_0_);
                 }
@@ -345,34 +355,40 @@ public class CustomItems
         if (mapPotionIds == null)
         {
             mapPotionIds = new LinkedHashMap();
-            mapPotionIds.put("water", new int[] {0});
-            mapPotionIds.put("awkward", new int[] {16});
-            mapPotionIds.put("thick", new int[] {32});
-            mapPotionIds.put("potent", new int[] {48});
+            mapPotionIds.put("water", getPotionId(0, 0));
+            mapPotionIds.put("awkward", getPotionId(0, 1));
+            mapPotionIds.put("thick", getPotionId(0, 2));
+            mapPotionIds.put("potent", getPotionId(0, 3));
             mapPotionIds.put("regeneration", getPotionIds(1));
-            mapPotionIds.put("moveSpeed", getPotionIds(2));
-            mapPotionIds.put("fireResistance", getPotionIds(3));
+            mapPotionIds.put("movespeed", getPotionIds(2));
+            mapPotionIds.put("fireresistance", getPotionIds(3));
             mapPotionIds.put("poison", getPotionIds(4));
             mapPotionIds.put("heal", getPotionIds(5));
-            mapPotionIds.put("nightVision", getPotionIds(6));
-            mapPotionIds.put("clear", getPotionIds(7));
-            mapPotionIds.put("bungling", getPotionIds(23));
-            mapPotionIds.put("charming", getPotionIds(39));
-            mapPotionIds.put("rank", getPotionIds(55));
+            mapPotionIds.put("nightvision", getPotionIds(6));
+            mapPotionIds.put("clear", getPotionId(7, 0));
+            mapPotionIds.put("bungling", getPotionId(7, 1));
+            mapPotionIds.put("charming", getPotionId(7, 2));
+            mapPotionIds.put("rank", getPotionId(7, 3));
             mapPotionIds.put("weakness", getPotionIds(8));
-            mapPotionIds.put("damageBoost", getPotionIds(9));
-            mapPotionIds.put("moveSlowdown", getPotionIds(10));
-            mapPotionIds.put("diffuse", getPotionIds(11));
-            mapPotionIds.put("smooth", getPotionIds(27));
-            mapPotionIds.put("refined", getPotionIds(43));
-            mapPotionIds.put("acrid", getPotionIds(59));
+            mapPotionIds.put("damageboost", getPotionIds(9));
+            mapPotionIds.put("moveslowdown", getPotionIds(10));
+            mapPotionIds.put("leaping", getPotionIds(11));
             mapPotionIds.put("harm", getPotionIds(12));
-            mapPotionIds.put("waterBreathing", getPotionIds(13));
+            mapPotionIds.put("waterbreathing", getPotionIds(13));
             mapPotionIds.put("invisibility", getPotionIds(14));
-            mapPotionIds.put("thin", getPotionIds(15));
-            mapPotionIds.put("debonair", getPotionIds(31));
-            mapPotionIds.put("sparkling", getPotionIds(47));
-            mapPotionIds.put("stinky", getPotionIds(63));
+            mapPotionIds.put("thin", getPotionId(15, 0));
+            mapPotionIds.put("debonair", getPotionId(15, 1));
+            mapPotionIds.put("sparkling", getPotionId(15, 2));
+            mapPotionIds.put("stinky", getPotionId(15, 3));
+            mapPotionIds.put("mundane", getPotionId(0, 4));
+            mapPotionIds.put("speed", mapPotionIds.get("movespeed"));
+            mapPotionIds.put("fire_resistance", mapPotionIds.get("fireresistance"));
+            mapPotionIds.put("instant_health", mapPotionIds.get("heal"));
+            mapPotionIds.put("night_vision", mapPotionIds.get("nightvision"));
+            mapPotionIds.put("strength", mapPotionIds.get("damageboost"));
+            mapPotionIds.put("slowness", mapPotionIds.get("moveslowdown"));
+            mapPotionIds.put("instant_damage", mapPotionIds.get("harm"));
+            mapPotionIds.put("water_breathing", mapPotionIds.get("waterbreathing"));
         }
 
         return mapPotionIds;
@@ -381,6 +397,11 @@ public class CustomItems
     private static int[] getPotionIds(int p_getPotionIds_0_)
     {
         return new int[] {p_getPotionIds_0_, p_getPotionIds_0_ + 16, p_getPotionIds_0_ + 32, p_getPotionIds_0_ + 48};
+    }
+
+    private static int[] getPotionId(int p_getPotionId_0_, int p_getPotionId_1_)
+    {
+        return new int[] {p_getPotionId_0_ + p_getPotionId_1_ * 16};
     }
 
     private static int getPotionNameDamage(String p_getPotionNameDamage_0_)
@@ -639,6 +660,11 @@ public class CustomItems
         {
             int i = getItemStackDamage(p_matchesProperties_1_);
 
+            if (i < 0)
+            {
+                return false;
+            }
+
             if (p_matchesProperties_0_.damageMask != 0)
             {
                 i &= p_matchesProperties_0_.damageMask;
@@ -656,7 +682,7 @@ public class CustomItems
             }
         }
 
-        if (p_matchesProperties_0_.stackSize != null && !p_matchesProperties_0_.stackSize.isInRange(p_matchesProperties_1_.getCount()))
+        if (p_matchesProperties_0_.stackSize != null && !p_matchesProperties_0_.stackSize.isInRange(p_matchesProperties_1_.func_190916_E()))
         {
             return false;
         }
@@ -731,6 +757,19 @@ public class CustomItems
                 }
             }
 
+            if (p_matchesProperties_0_.hand != 0)
+            {
+                if (p_matchesProperties_0_.hand == 1 && renderOffHand)
+                {
+                    return false;
+                }
+
+                if (p_matchesProperties_0_.hand == 2 && !renderOffHand)
+                {
+                    return false;
+                }
+            }
+
             return true;
         }
     }
@@ -760,7 +799,22 @@ public class CustomItems
             else
             {
                 Integer integer = (Integer)mapPotionDamages.get(s);
-                return integer == null ? 0 : integer.intValue();
+
+                if (integer == null)
+                {
+                    return -1;
+                }
+                else
+                {
+                    int i = integer.intValue();
+
+                    if (p_getPotionDamage_0_.getItem() == Items.SPLASH_POTION)
+                    {
+                        i |= 16384;
+                    }
+
+                    return i;
+                }
             }
         }
     }
@@ -768,29 +822,42 @@ public class CustomItems
     private static Map<String, Integer> makeMapPotionDamages()
     {
         Map<String, Integer> map = new HashMap();
-        addPotion("regeneration", 8193, map);
-        addPotion("swiftness", 8194, map);
-        addPotion("fire_resistance", 8195, map);
-        addPotion("poison", 8196, map);
-        addPotion("healing", 8197, map);
-        addPotion("night_vision", 8198, map);
-        addPotion("weakness", 8200, map);
-        addPotion("strength", 8201, map);
-        addPotion("slowness", 8202, map);
-        addPotion("leaping", 8203, map);
-        addPotion("harming", 8204, map);
-        addPotion("water_breathing", 8205, map);
-        addPotion("invisibility", 8206, map);
+        addPotion("water", 0, false, map);
+        addPotion("awkward", 16, false, map);
+        addPotion("thick", 32, false, map);
+        addPotion("mundane", 64, false, map);
+        addPotion("regeneration", 1, true, map);
+        addPotion("swiftness", 2, true, map);
+        addPotion("fire_resistance", 3, true, map);
+        addPotion("poison", 4, true, map);
+        addPotion("healing", 5, true, map);
+        addPotion("night_vision", 6, true, map);
+        addPotion("weakness", 8, true, map);
+        addPotion("strength", 9, true, map);
+        addPotion("slowness", 10, true, map);
+        addPotion("leaping", 11, true, map);
+        addPotion("harming", 12, true, map);
+        addPotion("water_breathing", 13, true, map);
+        addPotion("invisibility", 14, true, map);
         return map;
     }
 
-    private static void addPotion(String p_addPotion_0_, int p_addPotion_1_, Map<String, Integer> p_addPotion_2_)
+    private static void addPotion(String p_addPotion_0_, int p_addPotion_1_, boolean p_addPotion_2_, Map<String, Integer> p_addPotion_3_)
     {
-        p_addPotion_2_.put("minecraft:" + p_addPotion_0_, Integer.valueOf(p_addPotion_1_));
-        int i = p_addPotion_1_ | 32;
-        p_addPotion_2_.put("minecraft:strong_" + p_addPotion_0_, Integer.valueOf(i));
-        int j = p_addPotion_1_ | 64;
-        p_addPotion_2_.put("minecraft:long_" + p_addPotion_0_, Integer.valueOf(j));
+        if (p_addPotion_2_)
+        {
+            p_addPotion_1_ |= 8192;
+        }
+
+        p_addPotion_3_.put("minecraft:" + p_addPotion_0_, Integer.valueOf(p_addPotion_1_));
+
+        if (p_addPotion_2_)
+        {
+            int i = p_addPotion_1_ | 32;
+            p_addPotion_3_.put("minecraft:strong_" + p_addPotion_0_, Integer.valueOf(i));
+            int j = p_addPotion_1_ | 64;
+            p_addPotion_3_.put("minecraft:long_" + p_addPotion_0_, Integer.valueOf(j));
+        }
     }
 
     private static int[][] getEnchantmentIdLevels(ItemStack p_getEnchantmentIdLevels_0_)
@@ -966,7 +1033,7 @@ public class CustomItems
 
                                         if (Config.isShaders())
                                         {
-                                            ShadersRender.layerArmorBaseDrawEnchantedGlintBegin();
+                                            ShadersRender.renderEnchantedGlintBegin();
                                         }
 
                                         GlStateManager.enableBlend();
@@ -1007,7 +1074,7 @@ public class CustomItems
 
                     if (Config.isShaders())
                     {
-                        ShadersRender.layerArmorBaseDrawEnchantedGlintEnd();
+                        ShadersRender.renderEnchantedGlintEnd();
                     }
                 }
 
@@ -1019,5 +1086,10 @@ public class CustomItems
     public static boolean isUseGlint()
     {
         return useGlint;
+    }
+
+    public static void setRenderOffHand(boolean p_setRenderOffHand_0_)
+    {
+        renderOffHand = p_setRenderOffHand_0_;
     }
 }

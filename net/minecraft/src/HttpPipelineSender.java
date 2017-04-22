@@ -14,10 +14,10 @@ public class HttpPipelineSender extends Thread
     private static final String CRLF = "\r\n";
     private static Charset ASCII = Charset.forName("ASCII");
 
-    public HttpPipelineSender(HttpPipelineConnection p_i49_1_)
+    public HttpPipelineSender(HttpPipelineConnection p_i56_1_)
     {
         super("HttpPipelineSender");
-        this.httpPipelineConnection = p_i49_1_;
+        this.httpPipelineConnection = p_i56_1_;
     }
 
     public void run()

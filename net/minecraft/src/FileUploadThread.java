@@ -9,12 +9,12 @@ public class FileUploadThread extends Thread
     private byte[] content;
     private IFileUploadListener listener;
 
-    public FileUploadThread(String p_i35_1_, Map p_i35_2_, byte[] p_i35_3_, IFileUploadListener p_i35_4_)
+    public FileUploadThread(String p_i39_1_, Map p_i39_2_, byte[] p_i39_3_, IFileUploadListener p_i39_4_)
     {
-        this.urlString = p_i35_1_;
-        this.headers = p_i35_2_;
-        this.content = p_i35_3_;
-        this.listener = p_i35_4_;
+        this.urlString = p_i39_1_;
+        this.headers = p_i39_2_;
+        this.content = p_i39_3_;
+        this.listener = p_i39_4_;
     }
 
     public void run()

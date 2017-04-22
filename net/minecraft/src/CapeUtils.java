@@ -22,12 +22,7 @@ public class CapeUtils
 
         if (s != null && !s.isEmpty())
         {
-            //String s1 = "http://s.optifine.net/capes/" + s + ".png";
-            //s1 = "http://i65.tinypic.com/vql4pt.png";
-            //String s1 = "http://i66.tinypic.com/oqgnro.png";
-        	//String s1 = "https://dl.dropboxusercontent.com/u/140041858/Capes/" + s + ".png";
-        	String s1 = "https://github.com/lucemans/Cape/blob/master/" + s + ".png?raw=true";
-        	System.out.println("CHECKING " + s1);
+            String s1 = "http://s.optifine.net/capes/" + s + ".png";
             String s2 = FilenameUtils.getBaseName(s1);
             final ResourceLocation resourcelocation = new ResourceLocation("capeof/" + s2);
             TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();

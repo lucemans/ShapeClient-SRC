@@ -45,6 +45,7 @@ public class CustomItemProperties
     public RangeListInt enchantmentIds = null;
     public RangeListInt enchantmentLevels = null;
     public NbtTagValue[] nbtTagValues = null;
+    public int hand = 0;
     public int blend = 1;
     public float speed = 0.0F;
     public float rotation = 0.0F;
@@ -64,6 +65,9 @@ public class CustomItemProperties
     public static final int TYPE_ENCHANTMENT = 2;
     public static final int TYPE_ARMOR = 3;
     public static final int TYPE_ELYTRA = 4;
+    public static final int HAND_ANY = 0;
+    public static final int HAND_MAIN = 1;
+    public static final int HAND_OFF = 2;
 
     public CustomItemProperties(Properties p_i30_1_, String p_i30_2_)
     {
@@ -84,9 +88,10 @@ public class CustomItemProperties
         }
 
         this.stackSize = this.parseRangeListInt(p_i30_1_.getProperty("stackSize"));
-        this.enchantmentIds = this.parseRangeListInt(p_i30_1_.getProperty("enchantmentIDs"));
+        this.enchantmentIds = this.parseRangeListInt(p_i30_1_.getProperty("enchantmentIDs"), new ParserEnchantmentId());
         this.enchantmentLevels = this.parseRangeListInt(p_i30_1_.getProperty("enchantmentLevels"));
         this.nbtTagValues = this.parseNbtTagValues(p_i30_1_);
+        this.hand = this.parseHand(p_i30_1_.getProperty("hand"));
         this.blend = Blender.parseBlend(p_i30_1_.getProperty("blend"));
         this.speed = this.parseFloat(p_i30_1_.getProperty("speed"), 0.0F);
         this.rotation = this.parseFloat(p_i30_1_.getProperty("rotation"), 0.0F);
@@ -316,8 +321,9 @@ public class CustomItemProperties
             Set set = map.keySet();
             Map map1 = new LinkedHashMap();
 
-            for (Object s1 : set)
+            for (Object s10 : set)
             {
+            	String s1 = (String) s10;
                 String s2 = (String)map.get(s1);
                 s2 = fixTextureName(s2, p_parseTextures_1_);
                 map1.put(s1, s2);
@@ -397,6 +403,11 @@ public class CustomItemProperties
 
     private RangeListInt parseRangeListInt(String p_parseRangeListInt_1_)
     {
+        return this.parseRangeListInt(p_parseRangeListInt_1_, (IParserInt)null);
+    }
+
+    private RangeListInt parseRangeListInt(String p_parseRangeListInt_1_, IParserInt p_parseRangeListInt_2_)
+    {
         if (p_parseRangeListInt_1_ == null)
         {
             return null;
@@ -409,6 +420,18 @@ public class CustomItemProperties
             for (int i = 0; i < astring.length; ++i)
             {
                 String s = astring[i];
+
+                if (p_parseRangeListInt_2_ != null)
+                {
+                    int j = p_parseRangeListInt_2_.parse(s, Integer.MIN_VALUE);
+
+                    if (j != Integer.MIN_VALUE)
+                    {
+                        rangelistint.addRange(new RangeInt(j, j));
+                        continue;
+                    }
+                }
+
                 RangeInt rangeint = this.parseRangeInt(s);
 
                 if (rangeint == null)
@@ -504,10 +527,11 @@ public class CustomItemProperties
         {
             List list = new ArrayList();
 
-            for (Object s1 : map.keySet())
+            for (Object s10 : map.keySet())
             {
+            	String s1 = (String) s10;
                 String s2 = (String)map.get(s1);
-                String s3 = ((String) s1).substring(s.length());
+                String s3 = s1.substring(s.length());
                 NbtTagValue nbttagvalue = new NbtTagValue(s3, s2);
                 list.add(nbttagvalue);
             }
@@ -521,17 +545,48 @@ public class CustomItemProperties
     {
         Map map = new LinkedHashMap();
 
-        for (Object s : p_getMatchingProperties_0_.keySet())
+        for (Object s0 : p_getMatchingProperties_0_.keySet())
         {
-            String s1 = p_getMatchingProperties_0_.getProperty((String) s);
+        	String s = (String) s0;
+            String s1 = p_getMatchingProperties_0_.getProperty(s);
 
-            if (((String) s).startsWith(p_getMatchingProperties_1_))
+            if (s.startsWith(p_getMatchingProperties_1_))
             {
                 map.put(s, s1);
             }
         }
 
         return map;
+    }
+
+    private int parseHand(String p_parseHand_1_)
+    {
+        if (p_parseHand_1_ == null)
+        {
+            return 0;
+        }
+        else
+        {
+            p_parseHand_1_ = p_parseHand_1_.toLowerCase();
+
+            if (p_parseHand_1_.equals("any"))
+            {
+                return 0;
+            }
+            else if (p_parseHand_1_.equals("main"))
+            {
+                return 1;
+            }
+            else if (p_parseHand_1_.equals("off"))
+            {
+                return 2;
+            }
+            else
+            {
+                Config.warn("Invalid hand: " + p_parseHand_1_);
+                return 0;
+            }
+        }
     }
 
     public boolean isValid(String p_isValid_1_)
@@ -712,16 +767,17 @@ public class CustomItemProperties
         if (this.type == 1 && this.items.length == 1)
         {
             Item item = Item.getItemById(this.items[0]);
+            boolean flag = item == Items.POTIONITEM || item == Items.SPLASH_POTION || item == Items.LINGERING_POTION;
 
-            if (item == Items.POTIONITEM && this.damage != null && this.damage.getCountRanges() > 0)
+            if (flag && this.damage != null && this.damage.getCountRanges() > 0)
             {
                 RangeInt rangeint = this.damage.getRange(0);
                 int i = rangeint.getMin();
-                boolean flag = (i & 16384) != 0;
+                boolean flag1 = (i & 16384) != 0;
                 String s5 = this.getMapTexture(this.mapTextures, "texture.potion_overlay", "items/potion_overlay");
                 String s6 = null;
 
-                if (flag)
+                if (flag1)
                 {
                     s6 = this.getMapTexture(this.mapTextures, "texture.potion_bottle_splash", "items/potion_bottle_splash");
                 }

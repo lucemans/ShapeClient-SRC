@@ -15,13 +15,13 @@ public class RandomMobsRule
     public int[] sumWeights = null;
     public int sumAllWeights = 1;
 
-    public RandomMobsRule(ResourceLocation p_i69_1_, int[] p_i69_2_, int[] p_i69_3_, Biome[] p_i69_4_, RangeListInt p_i69_5_)
+    public RandomMobsRule(ResourceLocation p_i76_1_, int[] p_i76_2_, int[] p_i76_3_, Biome[] p_i76_4_, RangeListInt p_i76_5_)
     {
-        this.baseResLoc = p_i69_1_;
-        this.skins = p_i69_2_;
-        this.weights = p_i69_3_;
-        this.biomes = p_i69_4_;
-        this.heights = p_i69_5_;
+        this.baseResLoc = p_i76_1_;
+        this.skins = p_i76_2_;
+        this.weights = p_i76_3_;
+        this.biomes = p_i76_4_;
+        this.heights = p_i76_5_;
     }
 
     public boolean isValid(String p_isValid_1_)

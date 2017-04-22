@@ -21,16 +21,16 @@ public class HttpRequest
     public static final String HTTP_1_0 = "HTTP/1.0";
     public static final String HTTP_1_1 = "HTTP/1.1";
 
-    public HttpRequest(String p_i50_1_, int p_i50_2_, Proxy p_i50_3_, String p_i50_4_, String p_i50_5_, String p_i50_6_, Map<String, String> p_i50_7_, byte[] p_i50_8_)
+    public HttpRequest(String p_i57_1_, int p_i57_2_, Proxy p_i57_3_, String p_i57_4_, String p_i57_5_, String p_i57_6_, Map<String, String> p_i57_7_, byte[] p_i57_8_)
     {
-        this.host = p_i50_1_;
-        this.port = p_i50_2_;
-        this.proxy = p_i50_3_;
-        this.method = p_i50_4_;
-        this.file = p_i50_5_;
-        this.http = p_i50_6_;
-        this.headers = p_i50_7_;
-        this.body = p_i50_8_;
+        this.host = p_i57_1_;
+        this.port = p_i57_2_;
+        this.proxy = p_i57_3_;
+        this.method = p_i57_4_;
+        this.file = p_i57_5_;
+        this.http = p_i57_6_;
+        this.headers = p_i57_7_;
+        this.body = p_i57_8_;
     }
 
     public String getHost()

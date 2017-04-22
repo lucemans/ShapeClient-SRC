@@ -7,41 +7,27 @@ import net.minecraft.world.chunk.Chunk;
 
 public class ChunkUtils
 {
-    private static Field fieldHasEntities = null;
-    private static boolean fieldHasEntitiesMissing = false;
+    private static ReflectorField fieldHasEntities = null;
 
     public static boolean hasEntities(Chunk p_hasEntities_0_)
     {
         if (fieldHasEntities == null)
         {
-            if (fieldHasEntitiesMissing)
-            {
-                return true;
-            }
-
             fieldHasEntities = findFieldHasEntities(p_hasEntities_0_);
-
-            if (fieldHasEntities == null)
-            {
-                fieldHasEntitiesMissing = true;
-                return true;
-            }
         }
 
-        try
+        if (!fieldHasEntities.exists())
         {
-            return fieldHasEntities.getBoolean(p_hasEntities_0_);
-        }
-        catch (Exception exception)
-        {
-            Config.warn("Error calling Chunk.hasEntities");
-            Config.warn(exception.getClass().getName() + " " + exception.getMessage());
-            fieldHasEntitiesMissing = true;
             return true;
+        }
+        else
+        {
+            Boolean obool = (Boolean)Reflector.getFieldValue(p_hasEntities_0_, fieldHasEntities);
+            return obool == null ? true : obool.booleanValue();
         }
     }
 
-    private static Field findFieldHasEntities(Chunk p_findFieldHasEntities_0_)
+    private static ReflectorField findFieldHasEntities(Chunk p_findFieldHasEntities_0_)
     {
         try
         {
@@ -96,7 +82,7 @@ public class ChunkUtils
             if (list4.size() == 1)
             {
                 Field field4 = (Field)list4.get(0);
-                return field4;
+                return new ReflectorField(field4);
             }
         }
         catch (Exception exception)
@@ -105,6 +91,6 @@ public class ChunkUtils
         }
 
         Config.warn("Error finding Chunk.hasEntities");
-        return null;
+        return new ReflectorField(new ReflectorClass(Chunk.class), "hasEntities");
     }
 }

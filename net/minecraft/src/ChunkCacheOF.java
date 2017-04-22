@@ -134,10 +134,6 @@ public class ChunkCacheOF implements IBlockAccess
         cacheBlockStates.free(this.blockStates);
         this.blockStates = null;
     }
-    
-	public boolean aa() {
-		return this.chunkCache.extendedLevelsInChunkCache();
-	}
 
     public boolean extendedLevelsInChunkCache()
     {
@@ -156,7 +152,7 @@ public class ChunkCacheOF implements IBlockAccess
 
     public TileEntity getTileEntity(BlockPos pos)
     {
-        return this.chunkCache.getTileEntity(pos);
+        return this.chunkCache.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
     }
 
     public TileEntity getTileEntity(BlockPos p_getTileEntity_1_, Chunk.EnumCreateEntityType p_getTileEntity_2_)

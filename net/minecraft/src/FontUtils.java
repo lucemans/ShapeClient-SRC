@@ -50,18 +50,19 @@ public class FontUtils
 
     public static void readCustomCharWidths(Properties p_readCustomCharWidths_0_, float[] p_readCustomCharWidths_1_)
     {
-        for (Object s : p_readCustomCharWidths_0_.keySet())
+        for (Object s0 : p_readCustomCharWidths_0_.keySet())
         {
+        	String s = (String) s0;
             String s1 = "width.";
 
-            if (((String) s).startsWith(s1))
+            if (s.startsWith(s1))
             {
-                String s2 = ((String) s).substring(s1.length());
+                String s2 = s.substring(s1.length());
                 int i = Config.parseInt(s2, -1);
 
                 if (i >= 0 && i < p_readCustomCharWidths_1_.length)
                 {
-                    String s3 = p_readCustomCharWidths_0_.getProperty((String) s);
+                    String s3 = p_readCustomCharWidths_0_.getProperty(s);
                     float f = Config.parseFloat(s3, -1.0F);
 
                     if (f >= 0.0F)

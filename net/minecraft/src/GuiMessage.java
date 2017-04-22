@@ -17,11 +17,11 @@ public class GuiMessage extends GuiScreen
     protected String confirmButtonText;
     private int ticksUntilEnable;
 
-    public GuiMessage(GuiScreen p_i38_1_, String p_i38_2_, String p_i38_3_)
+    public GuiMessage(GuiScreen p_i45_1_, String p_i45_2_, String p_i45_3_)
     {
-        this.parentScreen = p_i38_1_;
-        this.messageLine1 = p_i38_2_;
-        this.messageLine2 = p_i38_3_;
+        this.parentScreen = p_i45_1_;
+        this.messageLine1 = p_i45_2_;
+        this.messageLine2 = p_i45_3_;
         this.confirmButtonText = I18n.format("gui.done", new Object[0]);
     }
 

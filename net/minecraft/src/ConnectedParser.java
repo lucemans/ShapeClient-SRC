@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -271,7 +272,7 @@ public class ConnectedParser
             else
             {
                 IBlockState iblockstate = p_parseBlockMetadatas_1_.getDefaultState();
-                Collection collection = iblockstate.getPropertyKeys();
+                Collection collection = iblockstate.getPropertyNames();
                 Map<IProperty, List<Comparable>> map = new HashMap();
 
                 for (int i = 0; i < p_parseBlockMetadatas_2_.length; ++i)
@@ -465,6 +466,14 @@ public class ConnectedParser
         }
         else
         {
+            boolean flag = false;
+
+            if (p_parseBiomes_1_.startsWith("!"))
+            {
+                flag = true;
+                p_parseBiomes_1_ = p_parseBiomes_1_.substring(1);
+            }
+
             String[] astring = Config.tokenize(p_parseBiomes_1_, " ");
             List list = new ArrayList();
 
@@ -481,6 +490,13 @@ public class ConnectedParser
                 {
                     list.add(biome);
                 }
+            }
+
+            if (flag)
+            {
+                List<Biome> list1 = Lists.newArrayList(Biome.REGISTRY.iterator());
+                list1.removeAll(list);
+                list = list1;
             }
 
             Biome[] abiome = (Biome[])((Biome[])list.toArray(new Biome[list.size()]));

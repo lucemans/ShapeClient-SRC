@@ -7,10 +7,10 @@ public class FileDownloadThread extends Thread
     private String urlString = null;
     private IFileDownloadListener listener = null;
 
-    public FileDownloadThread(String p_i34_1_, IFileDownloadListener p_i34_2_)
+    public FileDownloadThread(String p_i38_1_, IFileDownloadListener p_i38_2_)
     {
-        this.urlString = p_i34_1_;
-        this.listener = p_i34_2_;
+        this.urlString = p_i38_1_;
+        this.listener = p_i38_2_;
     }
 
     public void run()
