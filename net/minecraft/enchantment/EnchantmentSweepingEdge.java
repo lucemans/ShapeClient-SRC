@@ -2,12 +2,11 @@ package net.minecraft.enchantment;
 
 import net.minecraft.inventory.EntityEquipmentSlot;
 
-public class EnchantmentBindingCurse extends Enchantment
+public class EnchantmentSweepingEdge extends Enchantment
 {
-    public EnchantmentBindingCurse(Enchantment.Rarity p_i47254_1_, EntityEquipmentSlot... p_i47254_2_)
+    public EnchantmentSweepingEdge(Enchantment.Rarity p_i47366_1_, EntityEquipmentSlot... p_i47366_2_)
     {
-        super(p_i47254_1_, EnumEnchantmentType.WEARABLE, p_i47254_2_);
-        this.setName("binding_curse");
+        super(p_i47366_1_, EnumEnchantmentType.WEAPON, p_i47366_2_);
     }
 
     /**
@@ -15,7 +14,7 @@ public class EnchantmentBindingCurse extends Enchantment
      */
     public int getMinEnchantability(int enchantmentLevel)
     {
-        return 25;
+        return 5 + (enchantmentLevel - 1) * 9;
     }
 
     /**
@@ -23,7 +22,7 @@ public class EnchantmentBindingCurse extends Enchantment
      */
     public int getMaxEnchantability(int enchantmentLevel)
     {
-        return 50;
+        return this.getMinEnchantability(enchantmentLevel) + 15;
     }
 
     /**
@@ -31,16 +30,19 @@ public class EnchantmentBindingCurse extends Enchantment
      */
     public int getMaxLevel()
     {
-        return 1;
+        return 3;
     }
 
-    public boolean isTreasureEnchantment()
+    public static float func_191526_e(int p_191526_0_)
     {
-        return true;
+        return 1.0F - 1.0F / (float)(p_191526_0_ + 1);
     }
 
-    public boolean func_190936_d()
+    /**
+     * Return the name of key in translation table of this enchantment.
+     */
+    public String getName()
     {
-        return true;
+        return "enchantment.sweeping";
     }
 }
